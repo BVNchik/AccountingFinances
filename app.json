@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "name": "Accouting Finances",
+    "icon": "./components/images/icon.png",
+    "version": "1.0.0",
+    "sdkVersion": "27.0.0",
+    "android": {
+      "package": "com.kodep.accoutingfinances"
+    }
+  }
+
+}
