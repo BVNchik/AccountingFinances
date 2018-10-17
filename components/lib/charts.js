@@ -5,17 +5,17 @@ import { PieChart } from 'react-native-svg-charts'
 
 export default class Charts extends Component {
     render() {
-        const chartData = (type) => {
-            return type.map((categories, index) => {
+        const chartData = (category) => {
+            return category.map((category, index) => {
                 return {
-                    key: categories.name,
-                    value: parseInt(categories.sum),
-                    svg: { fill: categories.color },
-                    arc: { outerRadius: (70) + '%', padAngle: this.props.label === categories.name ? 0.03 : 0 },
+                    key: category.name,
+                    value: parseInt(category.sum),
+                    svg: { fill: category.color },
+                    arc: { outerRadius: (70) + '%', padAngle: this.props.label === category.name ? 0.03 : 0 },
                     onPress: () => {
-                        this.props.onEditionLabel(categories.name)
+                        this.props.onEditionLabel(category.name)
                         this.flatListRef.scrollToIndex({ animated: true, index: index })
-                        this.props.showCategoryInFlatList(index)
+                        this.props.onShowCategory(index)
                     }
                 }
             })
@@ -37,7 +37,7 @@ export default class Charts extends Component {
                     showsVerticalScrollIndicator={true}
                     ref={(ref) => { this.flatListRef = ref; }}
                     renderItem={({ item, index }) =>
-                        <TouchableOpacity onPress={() => this.props.choiceItem(item.name, index)} style={{ borderWidth: index === this.props.selectedItem ? 2 : 0 }} >
+                        <TouchableOpacity onPress={() => this.props.onChoiceItem(item.name, index)} style={{ borderWidth: index === this.props.selectedItem ? 2 : 0 }} >
                             <View style={{ flexDirection: 'row', backgroundColor: item.color, }}>
                                 <Image style={index === this.props.selectedItem ? styles.selectedImageFlatList : styles.imageFlatList}
                                     mode='stretch'

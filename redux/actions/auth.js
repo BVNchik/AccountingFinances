@@ -1,8 +1,8 @@
-import { authRequest } from '../../components/api/api'
+import  * as API  from '../../api/index'
 
 export function login () {
     return dispatch => {
-        let data = authRequest()
-        dispatch({type: 'LOGIN_SUCCESS', payload: data})
+       API.authRequest()
+          .then(res => dispatch({type: 'LOGIN_SUCCESS', payload: res}))
     }
 }

@@ -1,15 +1,11 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { TextInput, SafeAreaView, TouchableOpacity, StatusBar, StyleSheet, Text, View } from 'react-native';
 import { login } from '../../redux/actions/auth'
 import { connect } from 'react-redux'
 
-class ProfileScreen extends Component {
+class ProfileScreen extends PureComponent {
     static navigationOptions = {
         drawerLabel: 'Profile'
-    }
-
-    handleProfileScreen = () => {
-        this.props.navigation.navigate('ProfileScreen')
     }
 
     render() {
@@ -28,7 +24,7 @@ class ProfileScreen extends Component {
                     placeholder={'Пароль'}
                     style={styles.inputPrice}
                     onChange={(event) => this.setState({ password: event.nativeEvent.text })} />
-                <TouchableOpacity style={styles.button} onPress={() => this.props.onLoginRequest()}>
+                <TouchableOpacity style={styles.button} onPress={this.props.onLoginRequest()}>
                     <Text>Войти</Text>
                 </TouchableOpacity>
             </SafeAreaView>

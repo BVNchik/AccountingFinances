@@ -1,36 +1,36 @@
-import { addCategory, updateCategory, deleteCategory, fetchCategoriesAll, fetchCategoriesAllSum } from '../../components/api/api'
+import  * as API  from '../../api/index'
 
-export function fetchCategories() {
+export function fetchCategoriesAll() {
     return dispatch => {
-        fetchCategoriesAll()
+        API.fetchCategoriesAll()
             .then(res => dispatch({ type: 'FETCH_CATEGORIES', payload: res.data.categories }))
     }
 }
 
-export function fetchCategoriesSum(month, year) {
+export function fetchCategoriesAllSum(params) {
     return dispatch => {
-        fetchCategoriesAllSum(month, year)
+        API.fetchCategoriesAllSum(params)
             .then(res => dispatch({ type: 'FETCH_CATEGORIES_SUM', payload: res.data.categories }))
     }
 }
 
-export function addCategorys(categoryName, type, color) {
+export function addCategory(data) {
     return dispatch => {
-        addCategory(categoryName, type, color)
+        API.addCategory(data)
             .then(res => dispatch({ type: 'ADD_CATEGORY', payload: res.data }))
     }
 }
 
-export function updateCategorys(categoryId, categoryName, newColor) {
+export function updateCategory(categoryId, data) {
     return dispatch => {
-        updateCategory(categoryId, categoryName, newColor)
+        API.updateCategory(categoryId, data)
             .then(res => dispatch({ type: 'UPDATE_CATEGORY', payload: res.data }))
     }
 }
 
-export function deleteCategorys(categoryId) {
+export function deleteCategory(categoryId) {
     return dispatch => {
-        deleteCategory(categoryId)
+        API.deleteCategory(categoryId)
             .then(res => dispatch({ type: 'DELETE_CATEGORY', payload: categoryId }))
     }
 }

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import {
     ActivityIndicator, Keyboard,
     TouchableOpacity,
@@ -8,10 +8,10 @@ import { connect } from 'react-redux'
 import { fetchPayments, addPayments } from '../../redux/actions/payments'
 import { fetchCategories } from '../../redux/actions/categories'
 import { filteredCategoriesForPayments } from '../../redux/selectors/categoriesPayments'
-import menu from '../images/menu.png'
+import menu from '../../assets/images/menu.png'
 import InfoAndAddCategories from '../lib/showInfoAndAddCategories'
 
-export class PaymentsScreen extends Component {
+export class PaymentsScreen extends PureComponent {
 
     componentDidMount() {
         this.props.onCategoriesRequest()
@@ -22,20 +22,14 @@ export class PaymentsScreen extends Component {
         drawerLabel: 'Payments'
     }
 
-    handleIncomesScreen = () => {
-        this.props.navigation.navigate('PaymentsScreen')
-    }
-
-    constructor(props) {
-        super(props);
-        this.state = {
+    state = {
             deleteText: false,
-        };
     }
 
-    addPayment(categoryPayments, value) {
+    addPayment = (categoryPayments, value) => {
         if (categoryPayments != '' && value != null) {
-            this.props.onAddPayments(categoryPayments, value)
+            const data = {categoriesPayments, value}
+            this.props.onAddPayments(data)
             this.setState({ deleteText: true })
             Keyboard.dismiss()
         }
@@ -54,7 +48,7 @@ export class PaymentsScreen extends Component {
                     ) :
                     (<View>
                         <View style={styles.container}>
-                            <TouchableOpacity style={styles.button} onPress={() => this.props.navigation.toggleDrawer()}>
+                            <TouchableOpacity style={styles.button} onPress={this.props.navigation.toggleDrawer()}>
                                 <Image source={menu} style={styles.iconMenu} />
                             </TouchableOpacity>
                             <Text style={styles.textCaption}>Payments</Text>
@@ -85,7 +79,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
     onCategoriesRequest() { return dispatch(fetchCategories()) },
     onPaymentsRequest() { return dispatch(fetchPayments()) },
-    onAddPayments(categoryPayments, value) { return dispatch(addPayments(categoryPayments, value)) }
+    onAddPayments(data) { return dispatch(addPayments(data)) }
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(PaymentsScreen)

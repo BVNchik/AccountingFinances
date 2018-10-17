@@ -1,12 +1,12 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import {
     Keyboard, ActivityIndicator,
     FlatList, TextInput, TouchableOpacity, Image, StyleSheet, Text, View
 } from 'react-native';
-import edit from '../images/edit.png'
-import trash from '../images/trash.png'
-import add from '../images/squareAdd.png'
-import menu from '../images/menu.png'
+import edit from '../../assets/images/edit.png'
+import trash from '../../assets/images/trash.png'
+import add from '../../assets/images/squareAdd.png'
+import menu from '../../assets/images/menu.png'
 import { ColorPicker } from 'react-native-status-color-picker';
 import { fetchCategories, addCategorys, updateCategorys, deleteCategorys } from '../../redux/actions/categories'
 import { filteredCategoriesForIncomes } from '../../redux/selectors/categoriesIncomes'
@@ -14,32 +14,25 @@ import { filteredCategoriesForPayments } from '../../redux/selectors/categoriesP
 import Modal from 'react-native-modalbox';
 import { connect } from 'react-redux'
 
-export class SettingsScreen extends Component {
+export class SettingsScreen extends PureComponent {
 
     static navigationOptions = {
         drawerLabel: 'Settings'
     }
 
-    handleSettingsScreen = () => {
-        this.props.navigation.navigate('SettingsScreen')
-    }
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            categoryName: '',
-            typeCategory: '',
-            modifiedCategoryName: '',
-            changeCategoryId: '',
-            functionModalName: '',
-            textModal: '',
-            textCancelButtonModal: 'CANCEL',
-            textOkButtonModal: '',
-            swipeToClose: true,
-            isModalVisible: false,
-            colors: ["#F44336", "#E91E63", "#9C27B0", "#673AB7", "#3F51B5", "#2196F3", "#03A9F4", "#00BCD4", "#009688", "#4CAF50", "#8BC34A", "#CDDC39", "#FFEB3B", "#FFC107", "#FF9800", "#FF5722", "#795548", "#9E9E9E", "#607D8B"],
-            selectedColor: '#F44336',
-        };
+    state = {
+        categoryName: '',
+        typeCategory: '',
+        modifiedCategoryName: '',
+        changeCategoryId: '',
+        functionModalName: '',
+        textModal: '',
+        textCancelButtonModal: 'CANCEL',
+        textOkButtonModal: '',
+        swipeToClose: true,
+        isModalVisible: false,
+        colors: ["#F44336", "#E91E63", "#9C27B0", "#673AB7", "#3F51B5", "#2196F3", "#03A9F4", "#00BCD4", "#009688", "#4CAF50", "#8BC34A", "#CDDC39", "#FFEB3B", "#FFC107", "#FF9800", "#FF5722", "#795548", "#9E9E9E", "#607D8B"],
+        selectedColor: '#F44336',
     }
 
     componentDidMount() {
@@ -48,22 +41,25 @@ export class SettingsScreen extends Component {
 
     onSelect = color => this.setState({ selectedColor: color.toUpperCase() });
 
-    functionModal() {
-        if (this.state.functionModalName === 'AddNew') {
-            this.props.onAddCategory(this.state.modifiedCategoryName, this.state.typeCategory, this.state.selectedColor)
+    functionModal = () => {
+        const { functionModalName, modifiedCategoryName, typeCategory, selectedColor }
+        if (functionModalName === 'AddNew') {
+            const data = {modifiedCategoryName, typeCategory, selectedColor}
+            this.props.onAddCategory(data)
 
         } else {
-            this.props.onUpdateCategory(this.state.changeCategoryId, this.state.modifiedCategoryName, this.state.selectedColor)
+            const data = {modifiedCategoryName, selectedColo}
+            this.props.onUpdateCategory(changeCategoryId,data)
         }
         Keyboard.dismiss()
         this.refs.modal.close()
     }
 
-    deleteCategorys(categoryId) {
+    deleteCategorys = (categoryId) => {
         this.props.onDeletedCategory(categoryId)
     }
 
-    showModal(typeModule, typeCategory, id, categoryName, color) {
+    showModal = (typeModule, typeCategory, id, categoryName, color) => {
         if (typeModule === 'AddNew') {
             if (this.state.typeCategory === 'income') {
                 this.setState({ textModal: 'Add new category income' })
@@ -102,7 +98,7 @@ export class SettingsScreen extends Component {
                     ) : (
                         <View>
                             <View style={styles.container}>
-                                <TouchableOpacity style={styles.buttonBar} onPress={() => this.props.navigation.toggleDrawer()}>
+                                <TouchableOpacity style={styles.buttonBar} onPress={this.props.navigation.toggleDrawer()}>
                                     <Image source={menu} style={style.iconMenu} />
                                 </TouchableOpacity>
                                 <Text style={styles.textCaption}>Settings</Text>
@@ -110,7 +106,7 @@ export class SettingsScreen extends Component {
                             <View style={{ flexDirection: 'row', marginTop: 15 }}>
                                 <Text style={styles.textCategories}>Payments category</Text>
                                 <Text style={{ fontSize: 18 }}> Add new </Text>
-                                <TouchableOpacity style={styles.button} onPress={() => this.showModal('AddNew', 'payment')}>
+                                <TouchableOpacity style={styles.button} onPress={this.showModal('AddNew', 'payment')}>
                                     <Image source={add} style={styles.imageSize25} />
                                 </TouchableOpacity>
                             </View>
@@ -127,10 +123,10 @@ export class SettingsScreen extends Component {
                                         </Text>
                                         <TouchableOpacity style={styles.categoryTouch}>
                                         </TouchableOpacity>
-                                        <TouchableOpacity onPress={() => this.showModal('Edit', 'payment', item.id, item.name, item.color)}>
+                                        <TouchableOpacity onPress={this.showModal('Edit', 'payment', item.id, item.name, item.color)}>
                                             <Image source={edit} style={styles.imageSize25} />
                                         </TouchableOpacity>
-                                        <TouchableOpacity onPress={() => this.deleteCategorys(item.id)}>
+                                        <TouchableOpacity onPress={this.deleteCategorys(item.id)}>
                                             <Image source={trash} style={styles.imageDeleted} />
                                         </TouchableOpacity>
                                     </View>
@@ -141,7 +137,7 @@ export class SettingsScreen extends Component {
                             <View style={{ flexDirection: 'row', marginTop: 20 }}>
                                 <Text style={styles.textCategories}>Incomes category </Text>
                                 <Text style={{ fontSize: 18 }}> Add new </Text>
-                                <TouchableOpacity style={styles.button} onPress={() => this.showModal('AddNew', 'income')}  >
+                                <TouchableOpacity style={styles.button} onPress={this.showModal('AddNew', 'income')}  >
                                     <Image source={add} style={styles.imageSize25} />
                                 </TouchableOpacity>
                             </View>
@@ -158,10 +154,10 @@ export class SettingsScreen extends Component {
                                         </Text>
                                         <TouchableOpacity style={styles.categoryTouch}>
                                         </TouchableOpacity>
-                                        <TouchableOpacity onPress={() => this.showModal('Edit', 'income', item.id, item.name, item.color)}>
+                                        <TouchableOpacity onPress={this.showModal('Edit', 'income', item.id, item.name, item.color)}>
                                             <Image source={edit} style={styles.imageSize25} />
                                         </TouchableOpacity>
-                                        <TouchableOpacity onPress={() => this.deleteCategorys(item.id)}>
+                                        <TouchableOpacity onPress={this.deleteCategorys(item.id)}>
                                             <Image source={trash} style={{ marginLeft: 13, height: 25, width: 25 }} />
                                         </TouchableOpacity>
                                     </View>
@@ -188,10 +184,10 @@ export class SettingsScreen extends Component {
                                     />
                                 </View>
                                 <View style={{ flexDirection: 'row' }}>
-                                    <TouchableOpacity style={styles.buttonCancelModal} onPress={() => this.refs.modal.close()}>
+                                    <TouchableOpacity style={styles.buttonCancelModal} onPress={this.refs.modal.close()}>
                                         <Text> {textCancelButtonModal}</Text>
                                     </TouchableOpacity>
-                                    <TouchableOpacity style={styles.buttonOkModal} onPress={() => this.functionModal()}>
+                                    <TouchableOpacity style={styles.buttonOkModal} onPress={this.functionModal()}>
                                         <Text> {textOkButtonModal} </Text>
                                     </TouchableOpacity>
                                 </View>
@@ -212,11 +208,11 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     onFetchCategoriesAll() { return dispatch(fetchCategories()) },
-    onAddCategory(categoryName, typeCategory, selectedColor) {
-        return dispatch(addCategorys(categoryName, typeCategory, selectedColor))
+    onAddCategory(data) {
+        return dispatch(addCategorys(data))
     },
-    onUpdateCategory(categoryId, newCategoryName, newColor) {
-        return dispatch(updateCategorys(categoryId, newCategoryName, newColor))
+    onUpdateCategory(categoryId,data) {
+        return dispatch(updateCategorys(categoryId, data))
     },
     onDeletedCategory(categoryId) {
         return dispatch(deleteCategorys(categoryId))

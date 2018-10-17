@@ -1,6 +1,5 @@
 const initialState = [
-    user1 = {},
-    user2={}
+    user1 = {}
 ]
 
 export default function users (state = initialState, action) {

@@ -1,15 +1,15 @@
-import { fetchIncome, addIncome } from '../../components/api/api'
+import  * as API  from '../../api/index'
 
-export function fetchIncomes() {
+export function fetchIncome() {
     return dispatch => {
-        fetchIncome()
+        API.fetchIncome()
             .then(res => dispatch({ type: 'FETCH_INCOMES', payload: res.data.incomes }))
     }
 }
 
-export function addIncomes(categoryName, value) {
+export function addIncome(data) {
     return dispatch => {
-        addIncome(categoryName, value)
+        API.addIncome(data)
             .then(res => dispatch({ type: 'ADD_INCOME', payload: res.data.income}))
     }
 }

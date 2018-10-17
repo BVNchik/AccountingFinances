@@ -1,15 +1,14 @@
-import { fetchPayment, addPayment } from '../../components/api/api'
-
-export function fetchPayments() {
+import  * as API  from '../../api/index'
+export function fetchPayment() {
     return dispatch => {
-        fetchPayment()
+        API.fetchPayment()
             .then(res => dispatch({ type: 'FETCH_PAYMENTS', payload: res.data.payments }))
     }
 }
 
-export function addPayments(categoryName, value) {
+export function addPayment(data) {
     return dispatch => {
-        addPayment(categoryName, value)
+        API.addPayment(data)
             .then(res => dispatch({ type: 'ADD_PAYMENT', payload: res.data.payment }))
     }
 }

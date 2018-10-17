@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { FlatList, TextInput, TouchableOpacity, Image, StyleSheet, Text, View } from 'react-native';
-import circle from '../images/circle.png'
-import down from '../images/down.png'
-import up from '../images/up.png'
+import circle from '../../assets/images/circle.png'
+import down from '../../assets/images/down.png'
+import up from '../../assets/images/up.png'
 
 export default class SelectTextInput extends Component {
 

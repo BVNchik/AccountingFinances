@@ -1,9 +1,9 @@
 import React, { PureComponent } from 'react';
 import { ActivityIndicator, TouchableOpacity, StyleSheet, Image, Text, View } from 'react-native';
 import { connect } from 'react-redux'
-import { fetchCategoriesSum } from '../../redux/actions/categories'
-import Charts from '../lib/charts'
-import menu from '../images/menu.png'
+import { fetchCategoriesAllSum } from '../../redux/actions/categories'
+import Charts from '../../components/lib/charts'
+import menu from '../../assets/images/menu.png'
 import Modal from 'react-native-modalbox';
 import MonthSelectorCalendar from 'react-native-month-selector'
 import { filteredCategoriesForChartsIncomes, filteredCategoriesForChartsPayments } from '../../redux/selectors/categoriesSum';
@@ -14,31 +14,25 @@ export class ChartsScreen extends PureComponent {
         drawerLabel: 'Charts'
     }
 
-    handleChartsScreen = () => {
-        this.props.navigation.navigate('ChartsScreen')
+    state = {
+        selectedItem: null,
+        isPaymentChartsShow: true,
+        isIncomeChartsShow: false,
+        label: '',
+        year: (new Date()).getFullYear(),
+        _month: (new Date()).getMonth(),
+        categoryPayments: [],
+        categoryIncomes: [],
+        monthAndYear: '',
     }
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            selectedItem: null,
-            isPaymentChartsShow: true,
-            isIncomeChartsShow: false,
-            label: '',
-            year: (new Date()).getFullYear(),
-            _month: (new Date()).getMonth(),
-            categoryPayments: [],
-            categoryIncomes: [],
-            monthAndYear: '',
-        };
-    }
 
     componentDidMount() {
         this.props.onFetchCategories(this.state._month, this.state.year)
         this.setState({ monthAndYear: `${this.state._month + 1}/${this.state.year}` })
     }
 
-    shuffle(a) {
+    shuffle = (a) => {
         for (let i = a.length; i; i--) {
             let j = Math.floor(Math.random() * i);
             [a[i - 1], a[j]] = [a[j], a[i - 1]];
@@ -46,37 +40,51 @@ export class ChartsScreen extends PureComponent {
         return a;
     }
 
-    addMonthAndYear(dates) {
-        let month = dates.format('M')
+    addMonthAndYear = (dates) => {
+        let month = dates.format('M') - 1
         let year = dates.format('YYYY')
         this.setState({ _month: month, years: year, month: dates, monthAndYear: `${month}/${year}` })
-        this.props.fetchCategories(month - 1, year)
+        const params = { month, year }
+        this.props.fetchCategories(params)
     }
 
-    showModal() {
+    showModal = () => {
         this.refs.modal.open()
     }
 
-    showPayments() {
-        this.setState({ isIncomeChartsShow: false, isPaymentChartsShow: true, selectedItem: null })
+    showPayments = () => {
+        this.setState({ isPaymentChartsShow: true, selectedItem: null })
     }
 
-    showIncomes() {
-        this.setState({ isIncomeChartsShow: true, isPaymentChartsShow: false, selectedItem: null })
+    showIncomes = () => {
+        this.setState({ isPaymentChartsShow: false, selectedItem: null })
     }
 
-    choiceItem(name, index) {
+    choiceItem = (name, index) => {
         this.setState({ label: name })
         this.showCategoryInFlatList(index)
     }
 
-    showCategoryInFlatList(index) {
+    showCategoryInFlatList = (index) => {
         this.setState({ selectedItem: index })
     }
 
-    render() {
-        const { isIncomeChartsShow, isPaymentChartsShow, label, selectedItem, monthAndYear } = this.state;
+    renderChart = category => {
+        const { label, selectedItem } = this.state
 
+        return <Charts
+            category={category}
+            selectedItem={selectedItem}
+            label={label}
+            onEditionLabel={(label) => this.setState({ label: label })}
+            choiceItem={(name, index) => this.choiceItem(name, index)}
+            showCategoryInFlatList={(index) => this.showCategoryInFlatList(index)}
+        />
+    }
+
+    render() {
+        const { isPaymentChartsShow, monthAndYear } = this.state;
+        const { categoryIncomes, categoryPayments } = this.props;
         return (
             <View>
                 {this.props.isSpinerShow
@@ -98,52 +106,28 @@ export class ChartsScreen extends PureComponent {
                                 <TouchableOpacity
                                     style={[styles.touchShowCategory,
                                     { backgroundColor: isPaymentChartsShow ? 'white' : 'grey', }]}
-                                    onPress={() => this.showPayments()}>
+                                    onPress={this.showPayments()}>
                                     <Text>Payment</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     style={[styles.touchShowCategory,
-                                    { backgroundColor: isIncomeChartsShow ? 'white' : 'grey', }]}
-                                    onPress={() => this.showIncomes()}>
+                                    { backgroundColor: isPaymentChartsShow ? 'grey' : 'white', }]}
+                                    onPress={this.showIncomes()}>
                                     <Text>Income</Text>
                                 </TouchableOpacity>
                             </View>
                             <View style={{ flexDirection: 'row', marginTop: 10 }}>
                                 <Text style={styles.textReportMonth}>Report month: </Text>
                                 <TouchableOpacity style={styles.button}
-                                    onPress={() => this.showModal()}>
+                                    onPress={this.showModal()}>
                                     <Text>{monthAndYear}</Text>
                                 </TouchableOpacity>
                             </View>
 
-                            {/* Payments */}
-                            {
-                                isPaymentChartsShow ?
-                                    (
-                                        <Charts
-                                            category={this.props.categoryPayments}
-                                            selectedItem={selectedItem}
-                                            label={label}
-                                            onEditionLabel={(label) => this.setState({ label: label })}
-                                            choiceItem={(name, index) => this.choiceItem(name, index)}
-                                            showCategoryInFlatList={(index) => this.showCategoryInFlatList(index)}
-                                        />
+                            {isPaymentChartsShow 
+                            ? this.renderChart(categoryPayments) 
+                            : this.renderChart(categoryIncomes)}
 
-                                    ) : null
-                            }
-                            {/* Incomes */}
-                            {
-                                isIncomeChartsShow ?
-                                    (<Charts
-                                        category={this.props.categoryIncomes}
-                                        selectedItem={selectedItem}
-                                        label={label}
-                                        onEditionLabel={(label) => this.setState({ label: label })}
-                                        choiceItem={(name, index) => this.choiceItem(name, index)}
-                                        showCategoryInFlatList={(index) => this.showCategoryInFlatList(index)}
-                                    />
-                                    ) : null
-                            }
                             <Modal
                                 style={styles.modal}
                                 ref={'modal'}
@@ -174,7 +158,7 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => ({
-    onFetchCategories(month, year) { return dispatch(fetchCategoriesSum(month, year)) }
+    onFetchCategories(params) { return dispatch(fetchCategoriesAllSum(params)) }
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChartsScreen)

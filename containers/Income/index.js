@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import {
     ActivityIndicator,
     Keyboard, TouchableOpacity,
@@ -7,35 +7,29 @@ import {
 import { connect } from 'react-redux'
 import { fetchIncomes, addIncomes } from '../../redux/actions/incomes'
 import { filteredCategoriesForIncomes } from '../../redux/selectors/categoriesIncomes'
-import menu from '../images/menu.png'
-import InfoAndAddCategories from '../lib/showInfoAndAddCategories'
-import { fetchCategories } from '../../redux/actions/categories'
+import menu from '../../assets/images/menu.png'
+import InfoAndAddCategories from '../../components/lib/showInfoAndAddCategories'
+import { fetchCategoriesAll } from '../../redux/actions/categories'
 
-export class IncomesScreen extends Component {
+export class IncomesScreen extends PureComponent {
 
     componentDidMount() {
         this.props.onCategoriesRequest()
         this.props.onIncomesRequest()
     }
 
+    state = {
+        deleteText: false,
+    }
+
     static navigationOptions = {
         drawerLabel: 'Incomes'
     }
 
-    handleIncomesScreen = () => {
-        this.props.navigation.navigate('IncomesScreen')
-    }
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            deleteText: false,
-        };
-    }
-
-    addIncome(categoryIncomes, value) {
+    addIncome = (categoryIncomes, value) => {
         if (categoryIncomes != '' && value != null) {
-            this.props.onAddIncomes(categoryIncomes, value)
+            const data = { categoriesIncomes, value }
+            this.props.onAddIncomes(data)
             this.setState({ deleteText: true })
             Keyboard.dismiss()
         }
@@ -54,7 +48,7 @@ export class IncomesScreen extends Component {
                     ) :
                     (<View>
                         <View style={styles.container}>
-                            <TouchableOpacity style={styles.button} onPress={() => this.props.navigation.toggleDrawer()}>
+                            <TouchableOpacity style={styles.button} onPress={this.props.navigation.toggleDrawer()}>
                                 <Image source={menu} style={styles.iconMenu} />
                             </TouchableOpacity>
                             <Text style={styles.textCaption}>Incomes</Text>
@@ -83,9 +77,9 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => ({
-    onCategoriesRequest() { return dispatch(fetchCategories()) },
+    onCategoriesRequest() { return dispatch(fetchCategoriesAll()) },
     onIncomesRequest() { return dispatch(fetchIncomes()) },
-    onAddIncomes(categoryIncomes, value) { return dispatch(addIncomes(categoryIncomes, value)) }
+    onAddIncomes(data) { return dispatch(addIncomes(data)) }
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(IncomesScreen)
