@@ -6,15 +6,15 @@ import up from '../../assets/images/up.png'
 
 export default class SelectTextInput extends Component {
 
-    filterInput(text) {
+    filterInput = (text) => {
         this.props.onFilterInput(text)
     }
 
-    showAllCategories() {
+    showAllCategories = () => {
         this.props.onShowAllCategories()
     }
 
-    showCategories(event) {
+    showCategories = (event) => {
         this.filterInput(event)
         this.props.onChangeTextValue(event)
         this.props.onChange(event)
@@ -22,7 +22,7 @@ export default class SelectTextInput extends Component {
             this.props.onShowFlatList()
     }
 
-    choiceCategory(categoryName) {
+    choiceCategory = (categoryName) => {
         this.props.onSelect(categoryName)
         this.props.onChangeTextValue(categoryName)
         this.props.onToggleFlatListVisibility()
@@ -44,24 +44,25 @@ export default class SelectTextInput extends Component {
     );
 
     render() {
+        const { valueTextInput, placeholder, uncovered, categories } = this.props
         return (
             <View style={styles.views}>
                 <View style={{ flexDirection: 'row', }}>
                     <TextInput
-                        value={this.props.valueTextInput}
+                        value={valueTextInput}
                         style={styles.textInput}
                         autoCorrect={true}
-                        placeholder={this.props.placeholder}
+                        placeholder={placeholder}
                         onChangeText={(event) => this.showCategories(event)} />
                     <TouchableOpacity style={styles.button} onPress={() => this.showAllCategories()}>
-                        <Image source={this.props.uncovered ? down : up} style={styles.imageButton} />
+                        <Image source={uncovered ? down : up} style={styles.imageButton} />
                     </TouchableOpacity>
                 </View>
                 {
                     this.props.isFlatListShow ?
                         (<FlatList
                             keyboardShouldPersistTaps='always'
-                            data={this.props.categories}
+                            data={categories}
                             style={styles.flatList}
                             showsVerticalScrollIndicator={true}
                             getItemLayout={(data, index) => { return { length: 33, index, offset: 33 * index } }}

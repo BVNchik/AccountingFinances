@@ -8,7 +8,7 @@ import trash from '../../assets/images/trash.png'
 import add from '../../assets/images/squareAdd.png'
 import menu from '../../assets/images/menu.png'
 import { ColorPicker } from 'react-native-status-color-picker';
-import { fetchCategories, addCategorys, updateCategorys, deleteCategorys } from '../../redux/actions/categories'
+import { addCategory, updateCategory, deleteCategory, fetchCategoriesAll } from '../../redux/actions/categories'
 import { filteredCategoriesForIncomes } from '../../redux/selectors/categoriesIncomes'
 import { filteredCategoriesForPayments } from '../../redux/selectors/categoriesPayments'
 import Modal from 'react-native-modalbox';
@@ -29,8 +29,6 @@ export class SettingsScreen extends PureComponent {
         textModal: '',
         textCancelButtonModal: 'CANCEL',
         textOkButtonModal: '',
-        swipeToClose: true,
-        isModalVisible: false,
         colors: ["#F44336", "#E91E63", "#9C27B0", "#673AB7", "#3F51B5", "#2196F3", "#03A9F4", "#00BCD4", "#009688", "#4CAF50", "#8BC34A", "#CDDC39", "#FFEB3B", "#FFC107", "#FF9800", "#FF5722", "#795548", "#9E9E9E", "#607D8B"],
         selectedColor: '#F44336',
     }
@@ -39,17 +37,18 @@ export class SettingsScreen extends PureComponent {
         this.props.onFetchCategoriesAll()
     }
 
-    onSelect = color => this.setState({ selectedColor: color.toUpperCase() });
+    selectColor = color => this.setState({ selectedColor: color.toUpperCase() });
 
     functionModal = () => {
-        const { functionModalName, modifiedCategoryName, typeCategory, selectedColor }
+        const { functionModalName, modifiedCategoryName, typeCategory, selectedColor, changeCategoryId } = this.state
         if (functionModalName === 'AddNew') {
-            const data = {modifiedCategoryName, typeCategory, selectedColor}
+            const data = { category: modifiedCategoryName, type: typeCategory, color: selectedColor }
+            console.log('data', data)
             this.props.onAddCategory(data)
 
         } else {
-            const data = {modifiedCategoryName, selectedColo}
-            this.props.onUpdateCategory(changeCategoryId,data)
+            const data = {category: modifiedCategoryName, color: selectedColor }
+            this.props.onUpdateCategory(changeCategoryId, data)
         }
         Keyboard.dismiss()
         this.refs.modal.close()
@@ -80,10 +79,11 @@ export class SettingsScreen extends PureComponent {
         this.refs.modal.open()
     }
 
+
     render() {
         const { textModal,
             textCancelButtonModal,
-            textOkButtonModal, categoryName } = this.state
+            textOkButtonModal, categoryName, isShowModal } = this.state
 
         return (
 
@@ -98,15 +98,15 @@ export class SettingsScreen extends PureComponent {
                     ) : (
                         <View>
                             <View style={styles.container}>
-                                <TouchableOpacity style={styles.buttonBar} onPress={this.props.navigation.toggleDrawer()}>
-                                    <Image source={menu} style={style.iconMenu} />
+                                <TouchableOpacity style={styles.buttonBar} onPress={this.props.navigation.toggleDrawer}>
+                                    <Image source={menu} style={styles.iconMenu} />
                                 </TouchableOpacity>
                                 <Text style={styles.textCaption}>Settings</Text>
                             </View>
                             <View style={{ flexDirection: 'row', marginTop: 15 }}>
                                 <Text style={styles.textCategories}>Payments category</Text>
                                 <Text style={{ fontSize: 18 }}> Add new </Text>
-                                <TouchableOpacity style={styles.button} onPress={this.showModal('AddNew', 'payment')}>
+                                <TouchableOpacity style={styles.button} onPress={() => this.showModal('AddNew', 'payment')}>
                                     <Image source={add} style={styles.imageSize25} />
                                 </TouchableOpacity>
                             </View>
@@ -121,12 +121,12 @@ export class SettingsScreen extends PureComponent {
                                         <Text style={styles.textCategory}>
                                             {item.name}
                                         </Text>
-                                        <TouchableOpacity style={styles.categoryTouch}>
+                                        <TouchableOpacity style={[styles.categoryTouch, { backgroundColor: item.color }]}>
                                         </TouchableOpacity>
-                                        <TouchableOpacity onPress={this.showModal('Edit', 'payment', item.id, item.name, item.color)}>
+                                        <TouchableOpacity onPress={() => this.showModal('Edit', 'payment', item.id, item.name, item.color)}>
                                             <Image source={edit} style={styles.imageSize25} />
                                         </TouchableOpacity>
-                                        <TouchableOpacity onPress={this.deleteCategorys(item.id)}>
+                                        <TouchableOpacity onPress={() => this.deleteCategorys(item.id)}>
                                             <Image source={trash} style={styles.imageDeleted} />
                                         </TouchableOpacity>
                                     </View>
@@ -137,7 +137,7 @@ export class SettingsScreen extends PureComponent {
                             <View style={{ flexDirection: 'row', marginTop: 20 }}>
                                 <Text style={styles.textCategories}>Incomes category </Text>
                                 <Text style={{ fontSize: 18 }}> Add new </Text>
-                                <TouchableOpacity style={styles.button} onPress={this.showModal('AddNew', 'income')}  >
+                                <TouchableOpacity style={styles.button} onPress={() => this.showModal('AddNew', 'income')}  >
                                     <Image source={add} style={styles.imageSize25} />
                                 </TouchableOpacity>
                             </View>
@@ -152,22 +152,21 @@ export class SettingsScreen extends PureComponent {
                                         <Text style={styles.textCategory}>
                                             {item.name}
                                         </Text>
-                                        <TouchableOpacity style={styles.categoryTouch}>
+                                        <TouchableOpacity style={[styles.categoryTouch, { backgroundColor: item.color }]}>
                                         </TouchableOpacity>
-                                        <TouchableOpacity onPress={this.showModal('Edit', 'income', item.id, item.name, item.color)}>
+                                        <TouchableOpacity onPress={() => this.showModal('Edit', 'income', item.id, item.name, item.color)}>
                                             <Image source={edit} style={styles.imageSize25} />
                                         </TouchableOpacity>
-                                        <TouchableOpacity onPress={this.deleteCategorys(item.id)}>
+                                        <TouchableOpacity onPress={() => this.deleteCategorys(item.id)}>
                                             <Image source={trash} style={{ marginLeft: 13, height: 25, width: 25 }} />
                                         </TouchableOpacity>
                                     </View>
                                 }
                                 keyExtractor={item => item.id.toString()}
                             />
-
                             <Modal
-                                style={styles.modal}
                                 ref={'modal'}
+                                style={styles.modal}
                                 position={'center'}
                                 backdrop={true}>
                                 <View  >
@@ -180,18 +179,19 @@ export class SettingsScreen extends PureComponent {
                                     <ColorPicker
                                         colors={this.state.colors}
                                         selectedColor={this.state.selectedColor}
-                                        onSelect={this.onSelect}
+                                        onSelect={this.selectColor}
                                     />
                                 </View>
                                 <View style={{ flexDirection: 'row' }}>
-                                    <TouchableOpacity style={styles.buttonCancelModal} onPress={this.refs.modal.close()}>
+                                    <TouchableOpacity style={styles.buttonCancelModal} onPress={() => this.closeModal()}>
                                         <Text> {textCancelButtonModal}</Text>
                                     </TouchableOpacity>
-                                    <TouchableOpacity style={styles.buttonOkModal} onPress={this.functionModal()}>
+                                    <TouchableOpacity style={styles.buttonOkModal} onPress={() => this.functionModal()}>
                                         <Text> {textOkButtonModal} </Text>
                                     </TouchableOpacity>
                                 </View>
                             </Modal>
+
                         </View >
                     )
                 }
@@ -207,15 +207,15 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => ({
-    onFetchCategoriesAll() { return dispatch(fetchCategories()) },
+    onFetchCategoriesAll() { return dispatch(fetchCategoriesAll()) },
     onAddCategory(data) {
-        return dispatch(addCategorys(data))
+        return dispatch(addCategory(data))
     },
-    onUpdateCategory(categoryId,data) {
-        return dispatch(updateCategorys(categoryId, data))
+    onUpdateCategory(categoryId, data) {
+        return dispatch(updateCategory(categoryId, data))
     },
     onDeletedCategory(categoryId) {
-        return dispatch(deleteCategorys(categoryId))
+        return dispatch(deleteCategory(categoryId))
     },
 })
 
@@ -265,7 +265,6 @@ const styles = StyleSheet.create({
         width: 23,
         marginRight: 15,
         marginTop: 3,
-        backgroundColor: item.color
     },
     button: {
         marginLeft: 10,

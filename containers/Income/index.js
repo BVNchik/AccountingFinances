@@ -5,7 +5,7 @@ import {
     Image, StyleSheet, Text, View
 } from 'react-native';
 import { connect } from 'react-redux'
-import { fetchIncomes, addIncomes } from '../../redux/actions/incomes'
+import { fetchIncome, addIncome } from '../../redux/actions/incomes'
 import { filteredCategoriesForIncomes } from '../../redux/selectors/categoriesIncomes'
 import menu from '../../assets/images/menu.png'
 import InfoAndAddCategories from '../../components/lib/showInfoAndAddCategories'
@@ -15,7 +15,7 @@ export class IncomesScreen extends PureComponent {
 
     componentDidMount() {
         this.props.onCategoriesRequest()
-        this.props.onIncomesRequest()
+        this.props.onIncomeRequest()
     }
 
     state = {
@@ -26,19 +26,30 @@ export class IncomesScreen extends PureComponent {
         drawerLabel: 'Incomes'
     }
 
-    addIncome = (categoryIncomes, value) => {
-        if (categoryIncomes != '' && value != null) {
-            const data = { categoriesIncomes, value }
-            this.props.onAddIncomes(data)
+    addIncome = (category, price) => {
+        if (category !=='' && price !== null) {
+            const data = { category, price }
+            this.props.onAddIncome(data)
+            this.setState({ deleteText: true })
+            Keyboard.dismiss()
+        }
+    }
+
+    addPayment = (category, price) => {
+        if (category !== '' && price !== null) {
+            const data = {category, price}
+            this.props.onAddPayment(data)
             this.setState({ deleteText: true })
             Keyboard.dismiss()
         }
     }
 
     render() {
+        const { isSpinerShow, categories, categoriesIncomes } = this.props
+        console.log(categories)
         return (
             <View >
-                {this.props.isSpinerShow
+                {isSpinerShow
                     ? (<View height={'100%'} style={{
                         justifyContent: 'center',
                         alignItems: 'center'
@@ -48,19 +59,19 @@ export class IncomesScreen extends PureComponent {
                     ) :
                     (<View>
                         <View style={styles.container}>
-                            <TouchableOpacity style={styles.button} onPress={this.props.navigation.toggleDrawer()}>
+                            <TouchableOpacity style={styles.button} onPress={this.props.navigation.toggleDrawer}>
                                 <Image source={menu} style={styles.iconMenu} />
                             </TouchableOpacity>
                             <Text style={styles.textCaption}>Incomes</Text>
                         </View>
                         <InfoAndAddCategories
-                            categories={this.props.categories}
+                            categories={categories}
                             textSelectInput='Categories Incomes...'
                             textButton="Add incomes"
                             previousText='Previous incomes:'
                             deleteText={this.state.deleteText}
-                            data={this.props.categoriesIncomes}
-                            categorysType={this.props.categories}
+                            data={categoriesIncomes}
+                            categorysType={categories}
                             onPressButtonAdd={(categoryIncomes, value) => this.addIncome(categoryIncomes, value)}
                         />
                     </View>)
@@ -73,13 +84,13 @@ export class IncomesScreen extends PureComponent {
 const mapStateToProps = state => ({
     categories: filteredCategoriesForIncomes(state.categories),
     isSpinerShow: state.incomes.isSpinerShowIncomesScreen,
-    categoriesIncomes: state.incomes.incomes.incomes,
+    categoriesIncomes: state.incomes.incomes,
 })
 
 const mapDispatchToProps = dispatch => ({
     onCategoriesRequest() { return dispatch(fetchCategoriesAll()) },
-    onIncomesRequest() { return dispatch(fetchIncomes()) },
-    onAddIncomes(data) { return dispatch(addIncomes(data)) }
+    onIncomeRequest() { return dispatch(fetchIncome()) },
+    onAddIncome(data) { return dispatch(addIncome(data)) }
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(IncomesScreen)

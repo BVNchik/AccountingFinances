@@ -5,17 +5,17 @@ import {
     Image, StyleSheet, Text, View
 } from 'react-native';
 import { connect } from 'react-redux'
-import { fetchPayments, addPayments } from '../../redux/actions/payments'
-import { fetchCategories } from '../../redux/actions/categories'
+import { fetchPayment, addPayment } from '../../redux/actions/payments'
+import { fetchCategoriesAll } from '../../redux/actions/categories'
 import { filteredCategoriesForPayments } from '../../redux/selectors/categoriesPayments'
 import menu from '../../assets/images/menu.png'
-import InfoAndAddCategories from '../lib/showInfoAndAddCategories'
+import InfoAndAddCategories from '../../components/lib/showInfoAndAddCategories'
 
 export class PaymentsScreen extends PureComponent {
 
     componentDidMount() {
         this.props.onCategoriesRequest()
-        this.props.onPaymentsRequest()
+        this.props.onPaymentRequest()
     }
 
     static navigationOptions = {
@@ -26,19 +26,20 @@ export class PaymentsScreen extends PureComponent {
             deleteText: false,
     }
 
-    addPayment = (categoryPayments, value) => {
-        if (categoryPayments != '' && value != null) {
-            const data = {categoriesPayments, value}
-            this.props.onAddPayments(data)
+    addPayment = (category, price) => {
+        if (category !== '' && price !== null) {
+            const data = {category, price}
+            this.props.onAddPayment(data)
             this.setState({ deleteText: true })
             Keyboard.dismiss()
         }
     }
 
     render() {
+        const { isSpinerShow, categories, categoriesPayments } = this.props
         return (
             <View >
-                {this.props.isSpinerShow
+                {isSpinerShow
                     ? (<View height={'100%'} style={{
                         justifyContent: 'center',
                         alignItems: 'center'
@@ -48,19 +49,19 @@ export class PaymentsScreen extends PureComponent {
                     ) :
                     (<View>
                         <View style={styles.container}>
-                            <TouchableOpacity style={styles.button} onPress={this.props.navigation.toggleDrawer()}>
+                            <TouchableOpacity style={styles.button} onPress={this.props.navigation.toggleDrawer}>
                                 <Image source={menu} style={styles.iconMenu} />
                             </TouchableOpacity>
                             <Text style={styles.textCaption}>Payments</Text>
                         </View>
                         <InfoAndAddCategories
-                            categories={this.props.categories}
+                            categories={categories}
                             textSelectInput='Categories Payments...'
                             textButton="Add payments"
                             previousText='Previous payments:'
                             deleteText={this.state.deleteText}
-                            data={this.props.categoriesPayments}
-                            categorysType={this.props.categories}
+                            data={categoriesPayments}
+                            categorysType={categories}
                             onPressButtonAdd={(categoryPayments, value) => this.addPayment(categoryPayments, value)}
                         />
                     </View>)
@@ -77,9 +78,9 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => ({
-    onCategoriesRequest() { return dispatch(fetchCategories()) },
-    onPaymentsRequest() { return dispatch(fetchPayments()) },
-    onAddPayments(data) { return dispatch(addPayments(data)) }
+    onCategoriesRequest() { return dispatch(fetchCategoriesAll()) },
+    onPaymentRequest() { return dispatch(fetchPayment()) },
+    onAddPayment(data) { return dispatch(addPayment(data)) }
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(PaymentsScreen)

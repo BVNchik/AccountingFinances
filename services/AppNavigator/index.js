@@ -1,9 +1,9 @@
 import { createDrawerNavigator } from 'react-navigation';
-import  PaymentsScreen  from '../../components/Paymets';
-import  IncomesScreen  from '../../components/Income';
-import  ProfileScreen  from '../../components/Profile';
-import  SettingsScreen  from '../../components/Settings';
-import  ChartsScreen  from '../../components/Charts';
+import  PaymentsScreen  from '../../containers/Paymets';
+import  IncomesScreen  from '../../containers/Income';
+import  ProfileScreen  from '../../containers/Profile';
+import  SettingsScreen  from '../../containers/Settings';
+import  ChartsScreen  from '../../containers/Charts';
 
 const AppNavigator = createDrawerNavigator({
   Home: { screen: ProfileScreen },

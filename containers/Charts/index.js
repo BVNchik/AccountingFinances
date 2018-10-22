@@ -28,7 +28,8 @@ export class ChartsScreen extends PureComponent {
 
 
     componentDidMount() {
-        this.props.onFetchCategories(this.state._month, this.state.year)
+        const params = {month: this.state._month, year: this.state.year }
+        this.props.onFetchCategories(params)
         this.setState({ monthAndYear: `${this.state._month + 1}/${this.state.year}` })
     }
 
@@ -62,32 +63,31 @@ export class ChartsScreen extends PureComponent {
 
     choiceItem = (name, index) => {
         this.setState({ label: name })
-        this.showCategoryInFlatList(index)
+        this.showCategory(index)
     }
 
-    showCategoryInFlatList = (index) => {
+    showCategory = (index) => {
         this.setState({ selectedItem: index })
     }
 
     renderChart = category => {
         const { label, selectedItem } = this.state
-
         return <Charts
             category={category}
             selectedItem={selectedItem}
             label={label}
             onEditionLabel={(label) => this.setState({ label: label })}
-            choiceItem={(name, index) => this.choiceItem(name, index)}
-            showCategoryInFlatList={(index) => this.showCategoryInFlatList(index)}
+            onChoiceItem={(name, index) => this.choiceItem(name, index)}
+            onShowCategory={(index) => this.showCategory(index)}
         />
     }
 
     render() {
         const { isPaymentChartsShow, monthAndYear } = this.state;
-        const { categoryIncomes, categoryPayments } = this.props;
+        const { categoryIncomes, categoryPayments, isSpinerShow } = this.props;
         return (
             <View>
-                {this.props.isSpinerShow
+                {isSpinerShow
                     ? (<View height={'100%'} style={{
                         justifyContent: 'center',
                         alignItems: 'center'
@@ -97,7 +97,7 @@ export class ChartsScreen extends PureComponent {
                     ) : (
                         <View height={'100%'}>
                             <View style={styles.container}>
-                                <TouchableOpacity style={styles.buttonBar} onPress={() => this.props.navigation.toggleDrawer()}>
+                                <TouchableOpacity style={styles.buttonBar} onPress={this.props.navigation.toggleDrawer}>
                                     <Image source={menu} style={styles.iconMenu} />
                                 </TouchableOpacity>
                                 <Text style={styles.textCaption}>Charts</Text>
@@ -106,27 +106,27 @@ export class ChartsScreen extends PureComponent {
                                 <TouchableOpacity
                                     style={[styles.touchShowCategory,
                                     { backgroundColor: isPaymentChartsShow ? 'white' : 'grey', }]}
-                                    onPress={this.showPayments()}>
+                                    onPress={this.showPayments}>
                                     <Text>Payment</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     style={[styles.touchShowCategory,
                                     { backgroundColor: isPaymentChartsShow ? 'grey' : 'white', }]}
-                                    onPress={this.showIncomes()}>
+                                    onPress={this.showIncomes}>
                                     <Text>Income</Text>
                                 </TouchableOpacity>
                             </View>
                             <View style={{ flexDirection: 'row', marginTop: 10 }}>
                                 <Text style={styles.textReportMonth}>Report month: </Text>
                                 <TouchableOpacity style={styles.button}
-                                    onPress={this.showModal()}>
+                                    onPress={this.showModal}>
                                     <Text>{monthAndYear}</Text>
                                 </TouchableOpacity>
                             </View>
 
-                            {isPaymentChartsShow 
-                            ? this.renderChart(categoryPayments) 
-                            : this.renderChart(categoryIncomes)}
+                            {isPaymentChartsShow
+                                ? this.renderChart(categoryPayments)
+                                : this.renderChart(categoryIncomes)}
 
                             <Modal
                                 style={styles.modal}
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
         marginLeft: 20,
     },
-    touchShowCategoryIncome: {
+    touchShowCategory: {
         width: '50%',
         height: 30,
         alignItems: 'center',

@@ -3,7 +3,7 @@ import {
     FlatList, TextInput,
     Image, StyleSheet, Text, View
 } from 'react-native';
-import circle from '../images/circle.png'
+import circle from '../../assets/images/circle.png'
 import SelectTextInput from '../lib/selectTextInput'
 import { Button } from 'react-native-elements';
 
@@ -40,7 +40,7 @@ export default class InfoAndAddCategories extends Component {
 
     toggleFlatListVisibility = () => this.setState({ isFlatListShow: !this.state.isFlatListShow })
 
-    onChangeValueSelect = (value) => this.setState({ valueSelect: value })
+    changeValueSelect = (value) => this.setState({ valueSelect: value })
 
     render() {
 
@@ -59,7 +59,7 @@ export default class InfoAndAddCategories extends Component {
                     uncovered={uncovered}
                     incB={(a, b) => this.addCategory(a, b)}
                     valueTextInput={valueSelect}
-                    onChangeTextValue={(value) => this.onChangeValueSelect(value)}
+                    onChangeTextValue={(value) => this.changeValueSelect(value)}
                     placeholder={this.props.textSelectInput}
                     categories={categories}
                     onSelect={(categoryName) => { this.setState({ category: categoryName, uncovered: !uncovered }) }}
@@ -106,7 +106,6 @@ export default class InfoAndAddCategories extends Component {
 }
 
 const styles = StyleSheet.create({
-  
     inputPrice: {
         marginTop: 20,
         alignSelf: 'center',
@@ -121,14 +120,12 @@ const styles = StyleSheet.create({
         borderColor: 'black',
         borderWidth: 1,
     },
-
     previous: {
         marginTop: 15,
         alignSelf: 'center',
         width: '80%',
         fontSize: 18,
     },
-
     buttonAdd: {
         alignSelf: 'center',
         width: '87%',
@@ -137,28 +134,24 @@ const styles = StyleSheet.create({
         borderRadius: 3,
         backgroundColor: 'cornflowerblue',
     },
-
     flatList: {
         alignSelf: 'center',
         marginTop: 10,
         width: '95%',
         height: '50%',
     },
-
     textCategoryFlatList: {
         width: '65%',
         alignSelf: 'flex-start',
         marginTop: 5,
         fontSize: 18,
     },
-
     textPriceFlatList: {
         alignSelf: 'flex-end',
         width: '25%',
         marginBottom: 5,
         fontSize: 18,
     },
-
     imageFlatList: {
         marginTop: 5,
         marginBottom: 5,
@@ -167,7 +160,6 @@ const styles = StyleSheet.create({
         height: 25,
         width: 25,
     },
-
     button: {
         backgroundColor: 'transparent',
     },

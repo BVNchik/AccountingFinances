@@ -1,17 +1,19 @@
 import React, { Component } from 'react';
 import { FlatList, TouchableOpacity, Image, StyleSheet, Text, View } from 'react-native';
-import circle from '../images/circle.png'
+import circle from '../../assets/images/circle.png'
 import { PieChart } from 'react-native-svg-charts'
 
 export default class Charts extends Component {
     render() {
+
+        const { label, category, selectedItem} = this.props
         const chartData = (category) => {
             return category.map((category, index) => {
                 return {
                     key: category.name,
                     value: parseInt(category.sum),
                     svg: { fill: category.color },
-                    arc: { outerRadius: (70) + '%', padAngle: this.props.label === category.name ? 0.03 : 0 },
+                    arc: { outerRadius: (70) + '%', padAngle: label === category.name ? 0.03 : 0 },
                     onPress: () => {
                         this.props.onEditionLabel(category.name)
                         this.flatListRef.scrollToIndex({ animated: true, index: index })
@@ -28,25 +30,25 @@ export default class Charts extends Component {
                     outerRadius={'120%'}
                     innerRadius={'25%'}
                     data={
-                        chartData(this.props.category)}
+                        chartData(category)}
                 />
                 <FlatList
                     getItemLayout={(data, index) => { return { length: 33, offset: 33 * index, index } }}
-                    data={this.props.category}
+                    data={category}
                     style={styles.flatList}
                     showsVerticalScrollIndicator={true}
                     ref={(ref) => { this.flatListRef = ref; }}
                     renderItem={({ item, index }) =>
-                        <TouchableOpacity onPress={() => this.props.onChoiceItem(item.name, index)} style={{ borderWidth: index === this.props.selectedItem ? 2 : 0 }} >
+                        <TouchableOpacity onPress={() => this.props.onChoiceItem(item.name, index)} style={{ borderWidth: index === selectedItem ? 2 : 0 }} >
                             <View style={{ flexDirection: 'row', backgroundColor: item.color, }}>
-                                <Image style={index === this.props.selectedItem ? styles.selectedImageFlatList : styles.imageFlatList}
+                                <Image style={index === selectedItem ? styles.selectedImageFlatList : styles.imageFlatList}
                                     mode='stretch'
                                     source={circle}
                                 />
-                                <Text numberOfLines={1} style={index === this.props.selectedItem ? styles.selectedTextCategoryFlatList : styles.textCategoryFlatList}>
+                                <Text numberOfLines={1} style={index === selectedItem ? styles.selectedTextCategoryFlatList : styles.textCategoryFlatList}>
                                     {item.name}
                                 </Text>
-                                <Text numberOfLines={1} style={index === this.props.selectedItem ? styles.selectedTextPriceFlatList : styles.textPriceFlatList}>&#8381; {item.sum}</Text>
+                                <Text numberOfLines={1} style={index === selectedItem ? styles.selectedTextPriceFlatList : styles.textPriceFlatList}>&#8381; {item.sum}</Text>
                             </View>
                         </TouchableOpacity>
                     }

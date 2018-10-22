@@ -15,7 +15,7 @@ class ProfileScreen extends PureComponent {
                     barStyle="dark-content"
                     backgroundColor="#ecf0f1"
                 />
-                <Text style={{ alignSelf: "center", marginBottom: 20,}}>Авторизация</Text>
+                <Text style={{ alignSelf: "center", marginBottom: 20 }}>Авторизация</Text>
                 <TextInput
                     placeholder={'Логин'}
                     style={styles.inputPrice}
@@ -24,7 +24,7 @@ class ProfileScreen extends PureComponent {
                     placeholder={'Пароль'}
                     style={styles.inputPrice}
                     onChange={(event) => this.setState({ password: event.nativeEvent.text })} />
-                <TouchableOpacity style={styles.button} onPress={this.props.onLoginRequest()}>
+                <TouchableOpacity style={styles.button} onPress={this.props.onLoginRequest}>
                     <Text>Войти</Text>
                 </TouchableOpacity>
             </SafeAreaView>
@@ -66,7 +66,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignSelf: 'center',
         alignItems: 'center',
-        textAlign: 'center',
         backgroundColor: 'blue',
         width: '80%',
         height: '8%',

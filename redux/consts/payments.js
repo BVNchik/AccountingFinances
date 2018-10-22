@@ -1,0 +1,4 @@
+export default {
+    FETCH_PAYMENTS: 'FETCH_PAYMENTS',
+    ADD_PAYMENT: 'ADD_PAYMENT',
+};

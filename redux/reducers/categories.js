@@ -1,3 +1,5 @@
+import CATEGORIES from '../consts/cotegories'
+
 const initialState = {
     categories: [],
     categoriesSum: [],
@@ -7,15 +9,15 @@ const initialState = {
 
 export default function categories(state = initialState, action) {
     switch (action.type) {
-        case 'FETCH_CATEGORIES':
+        case CATEGORIES.FETCH_CATEGORIES:
             return { ...state, categories: action.payload, isSpinerShow: false }
-        case 'FETCH_CATEGORIES_SUM':
+        case CATEGORIES.FETCH_CATEGORIES_SUM:
             return { ...state, categoriesSum: action.payload, isSpinerShowChartsScreen: false }
-        case 'ADD_CATEGORY':
+        case CATEGORIES.ADD_CATEGORY:
             return addCategory(state, action.payload)
-        case 'UPDATE_CATEGORY':
+        case CATEGORIES.UPDATE_CATEGORY:
             return updateCategory(state, action.payload)
-        case 'DELETE_CATEGORY':
+        case CATEGORIES.DELETE_CATEGORY:
             return deleteCategory(state, action.payload)
         default: return state
     }
